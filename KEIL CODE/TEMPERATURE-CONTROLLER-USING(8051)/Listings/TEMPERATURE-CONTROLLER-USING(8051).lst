@@ -1,0 +1,714 @@
+C51 COMPILER V9.60.0.0   TEMPERATURE_CONTROLLER_USING_8051_                                03/26/2022 12:52:25 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE TEMPERATURE_CONTROLLER_USING_8051_
+OBJECT MODULE PLACED IN .\Objects\TEMPERATURE-CONTROLLER-USING(8051).obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE TEMPERATURE-CONTROLLER-USING(8051).c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJE
+                    -CTEXTEND CODE LISTINCLUDE SYMBOLS PRINT(.\Listings\TEMPERATURE-CONTROLLER-USING(8051).lst) TABS(2) OBJECT(.\Objects\TEMP
+                    -ERATURE-CONTROLLER-USING(8051).obj)
+
+line level    source
+
+   1           #include<reg51.h>
+   1      =1  /*--------------------------------------------------------------------------
+   2      =1  REG51.H
+   3      =1  
+   4      =1  Header file for generic 80C51 and 80C31 microcontroller.
+   5      =1  Copyright (c) 1988-2002 Keil Elektronik GmbH and Keil Software, Inc.
+   6      =1  All rights reserved.
+   7      =1  --------------------------------------------------------------------------*/
+   8      =1  
+   9      =1  #ifndef __REG51_H__
+  10      =1  #define __REG51_H__
+  11      =1  
+  12      =1  /*  BYTE Register  */
+  13      =1  sfr P0   = 0x80;
+  14      =1  sfr P1   = 0x90;
+  15      =1  sfr P2   = 0xA0;
+  16      =1  sfr P3   = 0xB0;
+  17      =1  sfr PSW  = 0xD0;
+  18      =1  sfr ACC  = 0xE0;
+  19      =1  sfr B    = 0xF0;
+  20      =1  sfr SP   = 0x81;
+  21      =1  sfr DPL  = 0x82;
+  22      =1  sfr DPH  = 0x83;
+  23      =1  sfr PCON = 0x87;
+  24      =1  sfr TCON = 0x88;
+  25      =1  sfr TMOD = 0x89;
+  26      =1  sfr TL0  = 0x8A;
+  27      =1  sfr TL1  = 0x8B;
+  28      =1  sfr TH0  = 0x8C;
+  29      =1  sfr TH1  = 0x8D;
+  30      =1  sfr IE   = 0xA8;
+  31      =1  sfr IP   = 0xB8;
+  32      =1  sfr SCON = 0x98;
+  33      =1  sfr SBUF = 0x99;
+  34      =1  
+  35      =1  
+  36      =1  /*  BIT Register  */
+  37      =1  /*  PSW   */
+  38      =1  sbit CY   = 0xD7;
+  39      =1  sbit AC   = 0xD6;
+  40      =1  sbit F0   = 0xD5;
+  41      =1  sbit RS1  = 0xD4;
+  42      =1  sbit RS0  = 0xD3;
+  43      =1  sbit OV   = 0xD2;
+  44      =1  sbit P    = 0xD0;
+  45      =1  
+  46      =1  /*  TCON  */
+  47      =1  sbit TF1  = 0x8F;
+  48      =1  sbit TR1  = 0x8E;
+  49      =1  sbit TF0  = 0x8D;
+  50      =1  sbit TR0  = 0x8C;
+  51      =1  sbit IE1  = 0x8B;
+  52      =1  sbit IT1  = 0x8A;
+C51 COMPILER V9.60.0.0   TEMPERATURE_CONTROLLER_USING_8051_                                03/26/2022 12:52:25 PAGE 2   
+
+  53      =1  sbit IE0  = 0x89;
+  54      =1  sbit IT0  = 0x88;
+  55      =1  
+  56      =1  /*  IE   */
+  57      =1  sbit EA   = 0xAF;
+  58      =1  sbit ES   = 0xAC;
+  59      =1  sbit ET1  = 0xAB;
+  60      =1  sbit EX1  = 0xAA;
+  61      =1  sbit ET0  = 0xA9;
+  62      =1  sbit EX0  = 0xA8;
+  63      =1  
+  64      =1  /*  IP   */ 
+  65      =1  sbit PS   = 0xBC;
+  66      =1  sbit PT1  = 0xBB;
+  67      =1  sbit PX1  = 0xBA;
+  68      =1  sbit PT0  = 0xB9;
+  69      =1  sbit PX0  = 0xB8;
+  70      =1  
+  71      =1  /*  P3  */
+  72      =1  sbit RD   = 0xB7;
+  73      =1  sbit WR   = 0xB6;
+  74      =1  sbit T1   = 0xB5;
+  75      =1  sbit T0   = 0xB4;
+  76      =1  sbit INT1 = 0xB3;
+  77      =1  sbit INT0 = 0xB2;
+  78      =1  sbit TXD  = 0xB1;
+  79      =1  sbit RXD  = 0xB0;
+  80      =1  
+  81      =1  /*  SCON  */
+  82      =1  sbit SM0  = 0x9F;
+  83      =1  sbit SM1  = 0x9E;
+  84      =1  sbit SM2  = 0x9D;
+  85      =1  sbit REN  = 0x9C;
+  86      =1  sbit TB8  = 0x9B;
+  87      =1  sbit RB8  = 0x9A;
+  88      =1  sbit TI   = 0x99;
+  89      =1  sbit RI   = 0x98;
+  90      =1  
+  91      =1  #endif
+   2           #define lcd P2
+   3          
+   4           //functions' declaration
+   5           void init();
+   6           void delay(int);
+   7           void character(unsigned char);
+   8           void cmd(unsigned char);
+   9           void string(unsigned char *);
+  10           void number(int);
+  11          
+  12           unsigned char read();
+  13          
+  14           sbit rs=P3^0;
+  15           sbit en=P3^1;
+  16          
+  17           sbit wr=P3^2;
+  18           sbit intr=P3^3;
+  19           sbit rd=P3^4;
+  20          
+  21           sbit ac=P3^5;
+  22          
+  23           unsigned char v,c=0;
+  24                                       
+C51 COMPILER V9.60.0.0   TEMPERATURE_CONTROLLER_USING_8051_                                03/26/2022 12:52:25 PAGE 3   
+
+  25          void main()
+  26          {
+  27   1        unsigned char m=3;
+  28   1        lcd=0x00;
+  29   1        rs=0;
+  30   1        en=0;
+  31   1        ac=0;
+  32   1        init();
+  33   1        cmd(0x01);
+  34   1        string("Temperature ");
+  35   1        cmd(0xc0);
+  36   1        string("Controller");
+  37   1        delay(2000);
+  38   1        
+  39   1        while(1)
+  40   1        {
+  41   2          cmd(0x01);
+  42   2          string("Temperature:");
+  43   2          cmd(0x8c);
+  44   2          v=read();    
+  45   2          number(v);
+  46   2          string("C");
+  47   2          delay(3000);
+  48   2          while(v>38)
+  49   2          {
+  50   3            c=1;
+  51   3            cmd(0x01);
+  52   3            cmd(0x80);
+  53   3            string("Cooling System");
+  54   3            cmd(0xc0);
+  55   3            string("is on.");
+  56   3            ac=1;
+  57   3            string(" Temp:");
+  58   3            v=read();    
+  59   3            number(v);
+  60   3            string("C");
+  61   3            delay(3000);
+  62   3          }
+  63   2          ac=0;
+  64   2        }
+  65   1      
+  66   1       }
+  67          
+  68          //--------------------------LCD Code-------------------//
+  69          void init()
+  70          {
+  71   1      //  cmd(0x20);
+  72   1      //  cmd(0x28);
+  73   1      //  cmd(0x30);
+  74   1        cmd(0x01);     //clear the screen c
+  75   1      
+  76   1        cmd(0x38);     //8-bit mode with 5*7 matrix
+  77   1        cmd(0x0c);     //display on with cursor =>(0ch=curson off; 0fh=cursor blinking; 0eh=curson on)
+  78   1        
+  79   1        
+  80   1        cmd(0x06);     //shift cursor =>(06h right--> ; 04h <---left; default=right--->)
+  81   1        cmd(0x80);     //position =>(80=1st row 1st position; c0=2nd row 1st position)
+  82   1      }
+  83          
+  84          void cmd(unsigned char ch)
+  85          {
+  86   1        lcd=ch;
+C51 COMPILER V9.60.0.0   TEMPERATURE_CONTROLLER_USING_8051_                                03/26/2022 12:52:25 PAGE 4   
+
+  87   1        rs=0;
+  88   1        en=1;
+  89   1        delay(2);
+  90   1        en=0;
+  91   1      }
+  92          
+  93          void character(unsigned char ch)
+  94          {
+  95   1        lcd=ch;
+  96   1        rs=1;
+  97   1        en=1;
+  98   1        delay(2);
+  99   1        en=0;
+ 100   1      }
+ 101          
+ 102          void string(unsigned char *p)
+ 103          {
+ 104   1        while(*p)
+ 105   1        character(*p++);
+ 106   1      }
+ 107          
+ 108          void number(int n)
+ 109          { 
+ 110   1        unsigned char i=1,arr[5];
+ 111   1      
+ 112   1        if(n<0)
+ 113   1        {
+ 114   2          character('-');     //signed representation for negative number
+ 115   2          n=-n;         //taking magnitude 
+ 116   2        }
+ 117   1        if(n==0)
+ 118   1          character('0');
+ 119   1        while(n>0)
+ 120   1        {
+ 121   2          arr[i]=(n%10)+48;
+ 122   2          n=n/10;
+ 123   2          i++;
+ 124   2        }
+ 125   1        
+ 126   1        for(--i;i>0;i--)     //problem with >=; remedy=> initialize i=1 and stop at i>0
+ 127   1        {
+ 128   2        character(arr[i]);
+ 129   2        }
+ 130   1      }
+ 131          //-----------------------End of LCD Code------------------------// 
+ 132          
+ 133          //----------------------ADC 0804 Code-------------------------//
+ 134          unsigned char read()
+ 135          {
+ 136   1        unsigned char value;
+ 137   1        wr=0;
+ 138   1        rd=1;
+ 139   1        delay(2);
+ 140   1        wr=1;        //Low to High Pulse to start conversion
+ 141   1        while(intr==1);    //wait till the conversion is done
+ 142   1        rd=0;        //take (or read) the data by making rd=0
+ 143   1        delay(2);
+ 144   1        value=P1;      
+ 145   1        return value;
+ 146   1      
+ 147   1      }
+ 148          //---------------End of ADC 0804 Code-----------------------//
+C51 COMPILER V9.60.0.0   TEMPERATURE_CONTROLLER_USING_8051_                                03/26/2022 12:52:25 PAGE 5   
+
+ 149          
+ 150          //--------------delay function-------------------------//
+ 151          void delay(int d)
+ 152          {
+ 153   1        unsigned char i;
+ 154   1        for(;d>0;d--)
+ 155   1        {
+ 156   2          for(i=250;i>0;i--);   //500usec
+ 157   2          for(i=250;i>0;i--);   //500usec
+ 158   2        }
+ 159   1      }
+ 160          //-----------------End  of delay function---------------------//
+C51 COMPILER V9.60.0.0   TEMPERATURE_CONTROLLER_USING_8051_                                03/26/2022 12:52:25 PAGE 6   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION main (BEGIN)
+                                           ; SOURCE LINE # 25
+                                           ; SOURCE LINE # 26
+                                           ; SOURCE LINE # 27
+0000 750003      R     MOV     m,#03H
+                                           ; SOURCE LINE # 28
+0003 E4                CLR     A
+0004 F5A0              MOV     P2,A
+                                           ; SOURCE LINE # 29
+0006 C2B0              CLR     rs
+                                           ; SOURCE LINE # 30
+0008 C2B1              CLR     en
+                                           ; SOURCE LINE # 31
+000A C2B5              CLR     ac
+                                           ; SOURCE LINE # 32
+000C 120000      R     LCALL   init
+                                           ; SOURCE LINE # 33
+000F 7F01              MOV     R7,#01H
+0011 120000      R     LCALL   _cmd
+                                           ; SOURCE LINE # 34
+0014 7BFF              MOV     R3,#0FFH
+0016 7A00        R     MOV     R2,#HIGH ?SC_0
+0018 7900        R     MOV     R1,#LOW ?SC_0
+001A 120000      R     LCALL   _string
+                                           ; SOURCE LINE # 35
+001D 7FC0              MOV     R7,#0C0H
+001F 120000      R     LCALL   _cmd
+                                           ; SOURCE LINE # 36
+0022 7BFF              MOV     R3,#0FFH
+0024 7A00        R     MOV     R2,#HIGH ?SC_13
+0026 7900        R     MOV     R1,#LOW ?SC_13
+0028 120000      R     LCALL   _string
+                                           ; SOURCE LINE # 37
+002B 7FD0              MOV     R7,#0D0H
+002D 7E07              MOV     R6,#07H
+002F 120000      R     LCALL   _delay
+0032         ?C0001:
+                                           ; SOURCE LINE # 39
+                                           ; SOURCE LINE # 40
+                                           ; SOURCE LINE # 41
+0032 7F01              MOV     R7,#01H
+0034 120000      R     LCALL   _cmd
+                                           ; SOURCE LINE # 42
+0037 7BFF              MOV     R3,#0FFH
+0039 7A00        R     MOV     R2,#HIGH ?SC_24
+003B 7900        R     MOV     R1,#LOW ?SC_24
+003D 120000      R     LCALL   _string
+                                           ; SOURCE LINE # 43
+0040 7F8C              MOV     R7,#08CH
+0042 120000      R     LCALL   _cmd
+                                           ; SOURCE LINE # 44
+                                           ; SOURCE LINE # 45
+                                           ; SOURCE LINE # 46
+                                           ; SOURCE LINE # 47
+0045 803A              SJMP    ?C0035
+0047         ?C0003:
+                                           ; SOURCE LINE # 48
+0047 D3                SETB    C
+0048 E500        R     MOV     A,v
+C51 COMPILER V9.60.0.0   TEMPERATURE_CONTROLLER_USING_8051_                                03/26/2022 12:52:25 PAGE 7   
+
+004A 9426              SUBB    A,#026H
+004C 7480              MOV     A,#080H
+004E 9480              SUBB    A,#080H
+0050 404B              JC      ?C0004
+                                           ; SOURCE LINE # 49
+                                           ; SOURCE LINE # 50
+0052 750001      R     MOV     c,#01H
+                                           ; SOURCE LINE # 51
+0055 7F01              MOV     R7,#01H
+0057 120000      R     LCALL   _cmd
+                                           ; SOURCE LINE # 52
+005A 7F80              MOV     R7,#080H
+005C 120000      R     LCALL   _cmd
+                                           ; SOURCE LINE # 53
+005F 7BFF              MOV     R3,#0FFH
+0061 7A00        R     MOV     R2,#HIGH ?SC_39
+0063 7900        R     MOV     R1,#LOW ?SC_39
+0065 120000      R     LCALL   _string
+                                           ; SOURCE LINE # 54
+0068 7FC0              MOV     R7,#0C0H
+006A 120000      R     LCALL   _cmd
+                                           ; SOURCE LINE # 55
+006D 7BFF              MOV     R3,#0FFH
+006F 7A00        R     MOV     R2,#HIGH ?SC_54
+0071 7900        R     MOV     R1,#LOW ?SC_54
+0073 120000      R     LCALL   _string
+                                           ; SOURCE LINE # 56
+0076 D2B5              SETB    ac
+                                           ; SOURCE LINE # 57
+0078 7BFF              MOV     R3,#0FFH
+007A 7A00        R     MOV     R2,#HIGH ?SC_61
+007C 7900        R     MOV     R1,#LOW ?SC_61
+007E 120000      R     LCALL   _string
+                                           ; SOURCE LINE # 58
+0081         ?C0035:
+0081 120000      R     LCALL   read
+0084 8F00        R     MOV     v,R7
+                                           ; SOURCE LINE # 59
+0086 7E00              MOV     R6,#00H
+0088 120000      R     LCALL   _number
+                                           ; SOURCE LINE # 60
+008B 7BFF              MOV     R3,#0FFH
+008D 7A00        R     MOV     R2,#HIGH ?SC_37
+008F 7900        R     MOV     R1,#LOW ?SC_37
+0091 120000      R     LCALL   _string
+                                           ; SOURCE LINE # 61
+0094 7FB8              MOV     R7,#0B8H
+0096 7E0B              MOV     R6,#0BH
+0098 120000      R     LCALL   _delay
+                                           ; SOURCE LINE # 62
+009B 80AA              SJMP    ?C0003
+009D         ?C0004:
+                                           ; SOURCE LINE # 63
+009D C2B5              CLR     ac
+                                           ; SOURCE LINE # 64
+009F 8091              SJMP    ?C0001
+             ; FUNCTION main (END)
+
+             ; FUNCTION init (BEGIN)
+                                           ; SOURCE LINE # 69
+                                           ; SOURCE LINE # 70
+                                           ; SOURCE LINE # 74
+C51 COMPILER V9.60.0.0   TEMPERATURE_CONTROLLER_USING_8051_                                03/26/2022 12:52:25 PAGE 8   
+
+0000 7F01              MOV     R7,#01H
+0002 120000      R     LCALL   _cmd
+                                           ; SOURCE LINE # 76
+0005 7F38              MOV     R7,#038H
+0007 120000      R     LCALL   _cmd
+                                           ; SOURCE LINE # 77
+000A 7F0C              MOV     R7,#0CH
+000C 120000      R     LCALL   _cmd
+                                           ; SOURCE LINE # 80
+000F 7F06              MOV     R7,#06H
+0011 120000      R     LCALL   _cmd
+                                           ; SOURCE LINE # 81
+0014 7F80              MOV     R7,#080H
+0016 020000      R     LJMP    _cmd
+             ; FUNCTION init (END)
+
+             ; FUNCTION _cmd (BEGIN)
+                                           ; SOURCE LINE # 84
+;---- Variable 'ch' assigned to Register 'R7' ----
+                                           ; SOURCE LINE # 85
+                                           ; SOURCE LINE # 86
+0000 8FA0              MOV     P2,R7
+                                           ; SOURCE LINE # 87
+0002 C2B0              CLR     rs
+                                           ; SOURCE LINE # 88
+                                           ; SOURCE LINE # 89
+0004 120000      R     LCALL   L?0036
+                                           ; SOURCE LINE # 90
+0007 C2B1              CLR     en
+                                           ; SOURCE LINE # 91
+0009 22                RET     
+             ; FUNCTION _cmd (END)
+
+             ; FUNCTION _character (BEGIN)
+                                           ; SOURCE LINE # 93
+;---- Variable 'ch' assigned to Register 'R7' ----
+                                           ; SOURCE LINE # 94
+                                           ; SOURCE LINE # 95
+0000 8FA0              MOV     P2,R7
+                                           ; SOURCE LINE # 96
+0002 D2B0              SETB    rs
+                                           ; SOURCE LINE # 97
+                                           ; SOURCE LINE # 98
+0004 120000      R     LCALL   L?0036
+                                           ; SOURCE LINE # 99
+0007 C2B1              CLR     en
+                                           ; SOURCE LINE # 100
+0009 22                RET     
+             ; FUNCTION _character (END)
+
+             ; FUNCTION _string (BEGIN)
+                                           ; SOURCE LINE # 102
+0000 8B00        R     MOV     p,R3
+0002 8A00        R     MOV     p+01H,R2
+0004 8900        R     MOV     p+02H,R1
+                                           ; SOURCE LINE # 103
+0006         ?C0009:
+                                           ; SOURCE LINE # 104
+0006 AB00        R     MOV     R3,p
+0008 AA00        R     MOV     R2,p+01H
+000A A900        R     MOV     R1,p+02H
+000C 120000      E     LCALL   ?C?CLDPTR
+C51 COMPILER V9.60.0.0   TEMPERATURE_CONTROLLER_USING_8051_                                03/26/2022 12:52:25 PAGE 9   
+
+000F 6013              JZ      ?C0011
+                                           ; SOURCE LINE # 105
+0011 0500        R     INC     p+02H
+0013 E500        R     MOV     A,p+02H
+0015 7002              JNZ     ?C0033
+0017 0500        R     INC     p+01H
+0019         ?C0033:
+0019 14                DEC     A
+001A F9                MOV     R1,A
+001B 120000      E     LCALL   ?C?CLDPTR
+001E FF                MOV     R7,A
+001F 120000      R     LCALL   _character
+0022 80E2              SJMP    ?C0009
+                                           ; SOURCE LINE # 106
+0024         ?C0011:
+0024 22                RET     
+             ; FUNCTION _string (END)
+
+             ; FUNCTION _number (BEGIN)
+                                           ; SOURCE LINE # 108
+0000 8E00        R     MOV     n,R6
+0002 8F00        R     MOV     n+01H,R7
+                                           ; SOURCE LINE # 109
+                                           ; SOURCE LINE # 110
+0004 750001      R     MOV     i,#01H
+                                           ; SOURCE LINE # 112
+0007 C3                CLR     C
+0008 E500        R     MOV     A,n
+000A 6480              XRL     A,#080H
+000C 9480              SUBB    A,#080H
+000E 5010              JNC     ?C0012
+                                           ; SOURCE LINE # 113
+                                           ; SOURCE LINE # 114
+0010 7F2D              MOV     R7,#02DH
+0012 120000      R     LCALL   _character
+                                           ; SOURCE LINE # 115
+0015 C3                CLR     C
+0016 E4                CLR     A
+0017 9500        R     SUBB    A,n+01H
+0019 F500        R     MOV     n+01H,A
+001B E4                CLR     A
+001C 9500        R     SUBB    A,n
+001E F500        R     MOV     n,A
+                                           ; SOURCE LINE # 116
+0020         ?C0012:
+                                           ; SOURCE LINE # 117
+0020 E500        R     MOV     A,n+01H
+0022 4500        R     ORL     A,n
+0024 7005              JNZ     ?C0014
+                                           ; SOURCE LINE # 118
+0026 7F30              MOV     R7,#030H
+0028 120000      R     LCALL   _character
+002B         ?C0014:
+                                           ; SOURCE LINE # 119
+002B D3                SETB    C
+002C E500        R     MOV     A,n+01H
+002E 9400              SUBB    A,#00H
+0030 E500        R     MOV     A,n
+0032 6480              XRL     A,#080H
+0034 9480              SUBB    A,#080H
+0036 4029              JC      ?C0015
+                                           ; SOURCE LINE # 120
+C51 COMPILER V9.60.0.0   TEMPERATURE_CONTROLLER_USING_8051_                                03/26/2022 12:52:25 PAGE 10  
+
+                                           ; SOURCE LINE # 121
+0038 AE00        R     MOV     R6,n
+003A AF00        R     MOV     R7,n+01H
+003C 7C00              MOV     R4,#00H
+003E 7D0A              MOV     R5,#0AH
+0040 120000      E     LCALL   ?C?SIDIV
+0043 ED                MOV     A,R5
+0044 2430              ADD     A,#030H
+0046 FF                MOV     R7,A
+0047 7400        R     MOV     A,#LOW arr
+0049 2500        R     ADD     A,i
+004B F8                MOV     R0,A
+004C A607              MOV     @R0,AR7
+                                           ; SOURCE LINE # 122
+004E AE00        R     MOV     R6,n
+0050 AF00        R     MOV     R7,n+01H
+0052 7C00              MOV     R4,#00H
+0054 7D0A              MOV     R5,#0AH
+0056 120000      E     LCALL   ?C?SIDIV
+0059 8E00        R     MOV     n,R6
+005B 8F00        R     MOV     n+01H,R7
+                                           ; SOURCE LINE # 123
+005D 0500        R     INC     i
+                                           ; SOURCE LINE # 124
+005F 80CA              SJMP    ?C0014
+0061         ?C0015:
+                                           ; SOURCE LINE # 126
+0061 1500        R     DEC     i
+0063         ?C0016:
+0063 D3                SETB    C
+0064 E500        R     MOV     A,i
+0066 9400              SUBB    A,#00H
+0068 7480              MOV     A,#080H
+006A 9480              SUBB    A,#080H
+006C 400E              JC      ?C0019
+                                           ; SOURCE LINE # 127
+                                           ; SOURCE LINE # 128
+006E 7400        R     MOV     A,#LOW arr
+0070 2500        R     ADD     A,i
+0072 F8                MOV     R0,A
+0073 E6                MOV     A,@R0
+0074 FF                MOV     R7,A
+0075 120000      R     LCALL   _character
+                                           ; SOURCE LINE # 129
+0078 1500        R     DEC     i
+007A 80E7              SJMP    ?C0016
+                                           ; SOURCE LINE # 130
+007C         ?C0019:
+007C 22                RET     
+             ; FUNCTION _number (END)
+
+             ; FUNCTION read (BEGIN)
+                                           ; SOURCE LINE # 134
+                                           ; SOURCE LINE # 135
+                                           ; SOURCE LINE # 137
+0000 C2B2              CLR     wr
+                                           ; SOURCE LINE # 138
+0002 D2B4              SETB    rd
+                                           ; SOURCE LINE # 139
+0004 120000      R     LCALL   L?0037
+                                           ; SOURCE LINE # 140
+0007 D2B2              SETB    wr
+C51 COMPILER V9.60.0.0   TEMPERATURE_CONTROLLER_USING_8051_                                03/26/2022 12:52:25 PAGE 11  
+
+0009         ?C0020:
+                                           ; SOURCE LINE # 141
+0009 20B3FD            JB      intr,?C0020
+                                           ; SOURCE LINE # 142
+000C C2B4              CLR     rd
+                                           ; SOURCE LINE # 143
+000E 120000      R     LCALL   L?0037
+                                           ; SOURCE LINE # 144
+;---- Variable 'value' assigned to Register 'R7' ----
+0011 AF90              MOV     R7,P1
+                                           ; SOURCE LINE # 145
+                                           ; SOURCE LINE # 147
+0013 22                RET     
+             ; FUNCTION read (END)
+
+             ; FUNCTION L?0036 (BEGIN)
+0000 D2B1              SETB    en
+0002         L?0037:
+0002 7F02              MOV     R7,#02H
+0004 7E00              MOV     R6,#00H
+             ; FUNCTION _delay (BEGIN)
+                                           ; SOURCE LINE # 151
+;---- Variable 'd' assigned to Register 'R6/R7' ----
+                                           ; SOURCE LINE # 152
+                                           ; SOURCE LINE # 154
+0006         ?C0023:
+0006 D3                SETB    C
+0007 EF                MOV     A,R7
+0008 9400              SUBB    A,#00H
+000A EE                MOV     A,R6
+000B 6480              XRL     A,#080H
+000D 9480              SUBB    A,#080H
+000F 4025              JC      ?C0032
+                                           ; SOURCE LINE # 155
+                                           ; SOURCE LINE # 156
+;---- Variable 'i' assigned to Register 'R5' ----
+0011 7DFA              MOV     R5,#0FAH
+0013         ?C0026:
+0013 ED                MOV     A,R5
+0014 D3                SETB    C
+0015 9400              SUBB    A,#00H
+0017 7480              MOV     A,#080H
+0019 9480              SUBB    A,#080H
+001B 4003              JC      ?C0027
+001D 1D                DEC     R5
+001E 80F3              SJMP    ?C0026
+0020         ?C0027:
+                                           ; SOURCE LINE # 157
+0020 7DFA              MOV     R5,#0FAH
+0022         ?C0029:
+0022 ED                MOV     A,R5
+0023 D3                SETB    C
+0024 9400              SUBB    A,#00H
+0026 7480              MOV     A,#080H
+0028 9480              SUBB    A,#080H
+002A 4003              JC      ?C0025
+002C 1D                DEC     R5
+002D 80F3              SJMP    ?C0029
+                                           ; SOURCE LINE # 158
+002F         ?C0025:
+002F EF                MOV     A,R7
+0030 1F                DEC     R7
+C51 COMPILER V9.60.0.0   TEMPERATURE_CONTROLLER_USING_8051_                                03/26/2022 12:52:25 PAGE 12  
+
+0031 70D3              JNZ     ?C0023
+0033 1E                DEC     R6
+0034         ?C0034:
+0034 80D0              SJMP    ?C0023
+                                           ; SOURCE LINE # 159
+0036         ?C0032:
+0036 22                RET     
+             ; FUNCTION _delay (END)
+
+C51 COMPILER V9.60.0.0   TEMPERATURE_CONTROLLER_USING_8051_                                03/26/2022 12:52:25 PAGE 13  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+P1 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0090H  1
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+_number. . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  n. . . . . . . . . . . . . . . . . .  AUTO     DATA   INT      0000H  2
+  i. . . . . . . . . . . . . . . . . .  AUTO     DATA   U_CHAR   0002H  1
+  arr. . . . . . . . . . . . . . . . .  AUTO     DATA   ARRAY    0003H  5
+_delay . . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0006H  -----
+  d. . . . . . . . . . . . . . . . . .  * REG *  DATA   INT      0006H  2
+  i. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0005H  1
+_string. . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  p. . . . . . . . . . . . . . . . . .  AUTO     DATA   PTR      0000H  3
+read . . . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  value. . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+main . . . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  m. . . . . . . . . . . . . . . . . .  AUTO     DATA   U_CHAR   0000H  1
+_character . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  ch . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+_cmd . . . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  ch . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+init . . . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+intr . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B3H  1
+ac . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B5H  1
+en . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B1H  1
+rd . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B4H  1
+c. . . . . . . . . . . . . . . . . . .  PUBLIC   DATA   U_CHAR   0000H  1
+rs . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B0H  1
+wr . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B2H  1
+v. . . . . . . . . . . . . . . . . . .  PUBLIC   DATA   U_CHAR   0001H  1
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    443    ----
+   CONSTANT SIZE    =     68    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2      12
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
