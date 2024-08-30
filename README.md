@@ -1,4 +1,3 @@
-# TEMPERATURE-CONTROLLER-USING-8051
 
 # Temperature Controller Using 8051 and Proteus
 
